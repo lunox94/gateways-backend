@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Gateway } from 'src/domain/gateway/gateway.model';
 import { gateways } from 'src/mock/gateways.data';
 import { v4 as uuidv4 } from 'uuid';
-import { GatewayToCreateDto } from './dto/dto';
+import { GatewayToCreateDto, GatewayToUpdate } from './dto/dto';
 
 @Injectable()
 export class GatewayService {
@@ -45,5 +45,23 @@ export class GatewayService {
         this._gateways.push(gateway);
 
         return gateway;
+    }
+
+    put(uid: string, gatewayToUpdate: GatewayToUpdate): boolean {
+        const index = this._gateways.findIndex((g) => g.uid === uid);
+
+        // if the gateway is not found then the operation cannot be performed
+        // hence returning false.
+        if (index === -1) {
+            return false;
+        }
+
+        console.log(gatewayToUpdate);
+
+        const newGateway = { ...this._gateways[index], ...gatewayToUpdate };
+
+        this._gateways[index] = newGateway;
+
+        return true;
     }
 }
