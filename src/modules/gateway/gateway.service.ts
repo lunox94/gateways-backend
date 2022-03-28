@@ -4,6 +4,10 @@ import { gateways } from 'src/mock/gateways.data';
 import { v4 as uuidv4 } from 'uuid';
 import { GatewayToCreateDto, GatewayToUpdate } from './dto/dto';
 
+/**
+ * Cover all use cases for the Gateway resource including CRUD operations
+ * over itself and its Devices.
+ */
 @Injectable()
 export class GatewayService {
     private _gateways: Gateway[];
@@ -48,7 +52,7 @@ export class GatewayService {
     }
 
     /**
-     *
+     *  Updates an existing gateway.
      * @param uid The uid of the gateway to be updated.
      * @param gatewayToUpdate Data to update the gateway.
      * @returns A boolean that indicates whether or not the operation completed
@@ -71,6 +75,12 @@ export class GatewayService {
         return true;
     }
 
+    /**
+     * Deletes an existing gateway.
+     * @param uid The uid of the gateway to be deleted.
+     * @returns A boolean that indicates whether or not the operation completed
+     * successfully.
+     */
     delete(uid: string) {
         // find the index of the gateway that should be deleted.
         const index = this._gateways.findIndex((g) => g.uid === uid);

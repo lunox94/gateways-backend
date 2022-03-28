@@ -14,6 +14,9 @@ import { Gateway } from 'src/domain/gateway/gateway.model';
 import { GatewayDto, GatewayToCreateDto, GatewayToUpdate } from './dto/dto';
 import { GatewayService } from './gateway.service';
 
+/**
+ * Allows CRUD operations on the Gateway resource and its Devices.
+ */
 @Controller('api/v1/gateways')
 export class GatewayController {
     constructor(private readonly _gatewayService: GatewayService) {}
@@ -48,6 +51,11 @@ export class GatewayController {
         return gatewayToReturn;
     }
 
+    /**
+     * Updates an existing gateway.
+     * @param uid Uid of the gateway to be updated.
+     * @param gatewayToUpdate Data used to update the gateway.
+     */
     @Put(':uid')
     @HttpCode(204)
     put(
@@ -70,6 +78,10 @@ export class GatewayController {
         }
     }
 
+    /**
+     * Deletes an existing gateway.
+     * @param uid Uid of the gateway to be deleted.
+     */
     @Delete(':uid')
     @HttpCode(204)
     delete(@Param('uid') uid: string) {
