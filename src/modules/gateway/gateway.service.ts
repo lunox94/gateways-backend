@@ -47,7 +47,15 @@ export class GatewayService {
         return gateway;
     }
 
+    /**
+     *
+     * @param uid The uid of the gateway to be updated.
+     * @param gatewayToUpdate Data to update the gateway.
+     * @returns A boolean that indicates whether or not the operation completed
+     * successfully.
+     */
     put(uid: string, gatewayToUpdate: GatewayToUpdate): boolean {
+        // find the index of the gateway that should be updated.
         const index = this._gateways.findIndex((g) => g.uid === uid);
 
         // if the gateway is not found then the operation cannot be performed
@@ -56,11 +64,24 @@ export class GatewayService {
             return false;
         }
 
-        console.log(gatewayToUpdate);
-
         const newGateway = { ...this._gateways[index], ...gatewayToUpdate };
 
         this._gateways[index] = newGateway;
+
+        return true;
+    }
+
+    delete(uid: string) {
+        // find the index of the gateway that should be deleted.
+        const index = this._gateways.findIndex((g) => g.uid === uid);
+
+        // if the gateway is not found then the operation cannot be performed
+        // hence returning false.
+        if (index === -1) {
+            return false;
+        }
+
+        this._gateways.splice(index, 1);
 
         return true;
     }

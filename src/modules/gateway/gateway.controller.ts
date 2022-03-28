@@ -1,7 +1,9 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
+    HttpCode,
     HttpException,
     HttpStatus,
     Param,
@@ -47,6 +49,7 @@ export class GatewayController {
     }
 
     @Put(':uid')
+    @HttpCode(204)
     put(
         @Param('uid') uid: string,
         @Body() gatewayToUpdate: GatewayToUpdate,
@@ -58,6 +61,25 @@ export class GatewayController {
         }
 
         const result = this._gatewayService.put(gateway.uid, gatewayToUpdate);
+
+        if (!result) {
+            throw new HttpException(
+                'Internal server error',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    @Delete(':uid')
+    @HttpCode(204)
+    delete(@Param('uid') uid: string) {
+        const gateway = this._gatewayService.get(uid);
+
+        if (!gateway) {
+            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+        }
+
+        const result = this._gatewayService.delete(uid);
 
         if (!result) {
             throw new HttpException(
