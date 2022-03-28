@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
     DeviceDto,
+    DeviceToCreateDto,
     GatewayDto,
     GatewayToCreateDto,
     GatewayToUpdateDto,
@@ -126,5 +127,34 @@ export class GatewayController {
         }
 
         return gateway.devices.map((d) => new DeviceDto(d));
+    }
+
+    /**
+     * Creates a new device for the given gateway.
+     * @param uid The uid of the gateway that owns the device.
+     * @param deviceToCreate Data to create the new device.
+     * @returns The newly created device.
+     */
+    @Post(':uid/devices')
+    postDevice(
+        @Param('uid') uid: string,
+        @Body() deviceToCreate: DeviceToCreateDto,
+    ): DeviceDto {
+        const gateway = this._gatewayService.get(uid);
+
+        if (!gateway) {
+            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+        }
+
+        const device = this._gatewayService.postDevice(uid, deviceToCreate);
+
+        if (!device) {
+            throw new HttpException(
+                'Internal server error',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+
+        return device;
     }
 }

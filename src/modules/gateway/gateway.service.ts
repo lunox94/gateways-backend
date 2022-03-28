@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { Device } from 'src/domain/device/device.model';
 import { Gateway } from 'src/domain/gateway/gateway.model';
 import { gateways } from 'src/mock/gateways.data';
 import { v4 as uuidv4 } from 'uuid';
-import { GatewayToCreateDto, GatewayToUpdateDto } from './dto/dto';
+import {
+    DeviceToCreateDto,
+    GatewayToCreateDto,
+    GatewayToUpdateDto,
+} from './dto/dto';
 
 /**
  * Cover all use cases for the Gateway resource including CRUD operations
@@ -94,5 +99,37 @@ export class GatewayService {
         this._gateways.splice(index, 1);
 
         return true;
+    }
+
+    /**
+     * Creates a new device for the given gateway.
+     * @param uid The uid of the gateway that owns the device.
+     * @param deviceToCreate Data to create the device.
+     * @returns The newly created device or undefined if the operation could
+     * not be performed.
+     */
+    postDevice(
+        uid: string,
+        deviceToCreate: DeviceToCreateDto,
+    ): Device | undefined {
+        // find the index of the gateway that should own this device
+        const index = this._gateways.findIndex((g) => g.uid === uid);
+
+        if (index === -1) {
+            return undefined;
+        }
+
+        const device: Device = {
+            ...deviceToCreate,
+            // using Date.now() to the uid due the business specs dictates
+            // the uid should be a number, as an in-memory solution is being used
+            // a timestamp should fit the specs.
+            uid: Date.now(),
+            createdAt: new Date(),
+        };
+
+        this._gateways[index].devices.push(device);
+
+        return device;
     }
 }
