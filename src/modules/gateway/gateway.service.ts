@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Gateway } from 'src/domain/gateway/gateway.model';
 import { gateways } from 'src/mock/gateways.data';
 import { v4 as uuidv4 } from 'uuid';
-import { GatewayToCreateDto, GatewayToUpdate } from './dto/dto';
+import { GatewayToCreateDto, GatewayToUpdateDto } from './dto/dto';
 
 /**
  * Cover all use cases for the Gateway resource including CRUD operations
@@ -58,7 +58,7 @@ export class GatewayService {
      * @returns A boolean that indicates whether or not the operation completed
      * successfully.
      */
-    put(uid: string, gatewayToUpdate: GatewayToUpdate): boolean {
+    put(uid: string, gatewayToUpdate: GatewayToUpdateDto): boolean {
         // find the index of the gateway that should be updated.
         const index = this._gateways.findIndex((g) => g.uid === uid);
 

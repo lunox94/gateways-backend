@@ -9,5 +9,5 @@ export class GatewayToCreateDto {
     /** An IPv4 address. */
     @IsNotEmpty()
     @IsIP('4')
-    ipv4: string;
+    readonly ipv4: string;
 }

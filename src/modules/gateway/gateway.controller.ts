@@ -10,7 +10,12 @@ import {
     Post,
     Put,
 } from '@nestjs/common';
-import { GatewayDto, GatewayToCreateDto, GatewayToUpdate } from './dto/dto';
+import {
+    DeviceDto,
+    GatewayDto,
+    GatewayToCreateDto,
+    GatewayToUpdateDto,
+} from './dto/dto';
 import { GatewayService } from './gateway.service';
 
 /**
@@ -66,7 +71,7 @@ export class GatewayController {
     @HttpCode(204)
     put(
         @Param('uid') uid: string,
-        @Body() gatewayToUpdate: GatewayToUpdate,
+        @Body() gatewayToUpdate: GatewayToUpdateDto,
     ): void {
         const gateway = this._gatewayService.get(uid);
 
@@ -105,5 +110,21 @@ export class GatewayController {
                 HttpStatus.INTERNAL_SERVER_ERROR,
             );
         }
+    }
+
+    /**
+     * Gets the list of the devices of a gateway.
+     * @param uid The uid of the gateway that owns the devices.
+     * @returns The list of devices for the given gateway.
+     */
+    @Get(':uid/devices')
+    getGatewayDevices(@Param('uid') uid: string): DeviceDto[] {
+        const gateway = this._gatewayService.get(uid);
+
+        if (!gateway) {
+            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+        }
+
+        return gateway.devices.map((d) => new DeviceDto(d));
     }
 }
