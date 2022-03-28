@@ -10,7 +10,6 @@ import {
     Post,
     Put,
 } from '@nestjs/common';
-import { Gateway } from 'src/domain/gateway/gateway.model';
 import { GatewayDto, GatewayToCreateDto, GatewayToUpdate } from './dto/dto';
 import { GatewayService } from './gateway.service';
 
@@ -21,20 +20,29 @@ import { GatewayService } from './gateway.service';
 export class GatewayController {
     constructor(private readonly _gatewayService: GatewayService) {}
 
+    /**
+     * Returns all the gateways.
+     * @returns A list with all the gateways.
+     */
     @Get()
-    getAll(): Gateway[] {
-        return this._gatewayService.getAll();
+    getAll(): GatewayDto[] {
+        return this._gatewayService.getAll().map((g) => new GatewayDto(g));
     }
 
+    /**
+     * Gets a gateway by its uid.
+     * @param uid The uid of the gateway to return.
+     * @returns The gateway if found.
+     */
     @Get(':uid')
-    get(@Param('uid') uid: string): Gateway {
+    get(@Param('uid') uid: string): GatewayDto {
         const gateway = this._gatewayService.get(uid);
 
         if (!gateway) {
             throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
         }
 
-        return gateway;
+        return new GatewayDto(gateway);
     }
 
     /**
@@ -46,9 +54,7 @@ export class GatewayController {
     post(@Body() gatewayToCreate: GatewayToCreateDto): GatewayDto {
         const gateway = this._gatewayService.post(gatewayToCreate);
 
-        const gatewayToReturn = new GatewayDto(gateway);
-
-        return gatewayToReturn;
+        return new GatewayDto(gateway);
     }
 
     /**
