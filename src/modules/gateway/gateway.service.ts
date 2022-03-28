@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Gateway } from 'src/domain/gateway/gateway.model';
 import { gateways } from 'src/mock/gateways.data';
+import { v4 as uuidv4 } from 'uuid';
+import { GatewayToCreateDto } from './dto/dto';
 
 @Injectable()
 export class GatewayService {
@@ -26,5 +28,22 @@ export class GatewayService {
      */
     get(uid: string): Gateway {
         return this._gateways.find((g) => g.uid == uid);
+    }
+
+    /**
+     * Creates a new gateway.
+     * @param gatewayToCreate Data to create the new gateway.
+     * @returns The newly created gateway.
+     */
+    post(gatewayToCreate: GatewayToCreateDto) {
+        const gateway: Gateway = {
+            ...gatewayToCreate,
+            uid: uuidv4(),
+            devices: [],
+        };
+
+        this._gateways.push(gateway);
+
+        return gateway;
     }
 }

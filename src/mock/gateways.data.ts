@@ -2,21 +2,9 @@ import { Gateway } from 'src/domain/gateway/gateway.model';
 
 export const gateways: Gateway[] = [
     {
-        uid: '1',
-        ipv4: '192.168.1.1',
-        name: 'PORTAL-8099',
-        devices: [],
-    },
-    {
-        uid: '2',
-        ipv4: '192.168.1.2',
-        name: 'PORTAL-1005',
-        devices: [],
-    },
-    {
-        uid: '3',
-        ipv4: '192.168.1.2',
-        name: 'BACKDOOR-37',
+        uid: '725e0f9c-da72-4f12-8f27-5853d245c4c7',
+        name: 'FRONT-WEAR',
+        ipv4: '192.168.0.0',
         devices: [],
     },
 ];

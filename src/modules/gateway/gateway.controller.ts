@@ -1,11 +1,14 @@
 import {
+    Body,
     Controller,
     Get,
     HttpException,
     HttpStatus,
     Param,
+    Post,
 } from '@nestjs/common';
 import { Gateway } from 'src/domain/gateway/gateway.model';
+import { GatewayDto, GatewayToCreateDto } from './dto/dto';
 import { GatewayService } from './gateway.service';
 
 @Controller('api/v1/gateways')
@@ -26,5 +29,14 @@ export class GatewayController {
         }
 
         return gateway;
+    }
+
+    @Post()
+    post(@Body() gatewayToCreate: GatewayToCreateDto): GatewayDto {
+        const gateway = this._gatewayService.post(gatewayToCreate);
+
+        const gatewayToReturn = new GatewayDto(gateway);
+
+        return gatewayToReturn;
     }
 }
