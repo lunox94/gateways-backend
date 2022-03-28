@@ -1,4 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    HttpException,
+    HttpStatus,
+    Param,
+} from '@nestjs/common';
 import { Gateway } from 'src/domain/gateway/gateway.model';
 import { GatewayService } from './gateway.service';
 
@@ -13,6 +19,12 @@ export class GatewayController {
 
     @Get(':uid')
     get(@Param('uid') uid: string): Gateway {
-        return this._gatewayService.get(uid);
+        const gateway = this._gatewayService.get(uid);
+
+        if (!gateway) {
+            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+        }
+
+        return gateway;
     }
 }
