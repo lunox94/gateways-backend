@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GatewayMaxNumberOfDevicesException } from 'src/common/exceptions/exceptions';
-import { Device } from 'src/domain/device/device.model';
-import { Gateway } from 'src/domain/gateway/gateway.model';
+import { Device } from 'src/domain/device.model';
+import { Gateway } from 'src/domain/gateway.model';
 import { gateways } from 'src/mock/gateways.data';
 import { v4 as uuidv4 } from 'uuid';
 import {

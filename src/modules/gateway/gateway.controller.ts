@@ -90,10 +90,7 @@ export class GatewayController {
         const result = this._gatewayService.put(gateway.uid, gatewayToUpdate);
 
         if (!result) {
-            throw new HttpException(
-                'Internal server error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            throw new AppException();
         }
     }
 
@@ -113,10 +110,7 @@ export class GatewayController {
         const result = this._gatewayService.delete(uid);
 
         if (!result) {
-            throw new HttpException(
-                'Internal server error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            throw new AppException();
         }
     }
 
@@ -156,10 +150,7 @@ export class GatewayController {
         const device = this._gatewayService.postDevice(uid, deviceToCreate);
 
         if (!device) {
-            throw new HttpException(
-                'Internal server error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            throw new AppException();
         }
 
         return device;

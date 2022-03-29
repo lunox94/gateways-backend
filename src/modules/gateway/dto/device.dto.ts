@@ -1,4 +1,4 @@
-import { Device, DeviceStatus } from 'src/domain/device/device.model';
+import { Device, DeviceStatus } from 'src/domain/device.model';
 
 export class DeviceDto {
     readonly uid: number;

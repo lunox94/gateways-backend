@@ -1,4 +1,4 @@
-import { Gateway } from 'src/domain/gateway/gateway.model';
+import { Gateway } from 'src/domain/gateway.model';
 import { DeviceDto } from './device.dto';
 
 export class GatewayDto {

@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { DeviceStatus } from 'src/domain/device/device.model';
+import { DeviceStatus } from 'src/domain/device.model';
 
 export class DeviceToCreateDto {
     /** The vendor's name of the device. */

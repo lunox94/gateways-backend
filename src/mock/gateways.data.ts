@@ -1,4 +1,4 @@
-import { Gateway } from 'src/domain/gateway/gateway.model';
+import { Gateway } from 'src/domain/gateway.model';
 
 export const gateways: Gateway[] = [
     {
