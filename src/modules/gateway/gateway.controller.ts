@@ -191,4 +191,31 @@ export class GatewayController {
             throw new AppException();
         }
     }
+
+    /**
+     * Deletes an existing device.
+     * @param uid The uid of the gateway that owns the device.
+     * @param duid The uid of the device to delete.
+     */
+    @Delete(':uid/devices/:duid')
+    @HttpCode(204)
+    deleteDevice(@Param('uid') uid: string, @Param('duid') duid: number): void {
+        const gateway = this._gatewayService.get(uid);
+
+        if (!gateway) {
+            throw new GatewayNotFoundException();
+        }
+
+        const device = gateway.devices.find((d) => d.uid === duid);
+
+        if (!device) {
+            throw new DeviceNotFoundException();
+        }
+
+        const result = this._gatewayService.deleteDevice(uid, duid);
+
+        if (!result) {
+            throw new AppException();
+        }
+    }
 }

@@ -159,20 +159,57 @@ export class GatewayService {
         // find the gateway that should own this device.
         const gateway = this._gateways.find((g) => g.uid === uid);
 
-        // find the device to be updated.
+        // if the gateway is not found then the operation cannot
+        // be performed hence returning false.
+        if (!gateway) {
+            return false;
+        }
+
+        // find the index of the device to be updated.
         const deviceIndex = gateway.devices.findIndex((d) => d.uid === duid);
 
-        // if the gateway is not found or the device is not found
-        // then the operation cannot be performed hence returning false.
-        if (!gateway || deviceIndex === -1) {
-            return undefined;
+        // if the device is not found then the operation cannot
+        // be performed hence returning false.
+        if (deviceIndex === -1) {
+            return false;
         }
 
         const newDevice = {
             ...gateway.devices[deviceIndex],
             ...deviceToUpdate,
         };
+
         gateway.devices[deviceIndex] = newDevice;
+
+        return true;
+    }
+
+    /**
+     * Deletes an existing device.
+     * @param uid The uid of the gateway that owns the device.
+     * @param duid The uid of the device to be deleted.
+     * @returns A boolean that indicates whether or not the operation completed
+     * successfully.
+     */
+    deleteDevice(uid: string, duid: number): boolean {
+        const gateway = this._gateways.find((g) => g.uid === uid);
+
+        // if the gateway is not found then the operation cannot be performed
+        // hence returning false.
+        if (!gateway) {
+            return false;
+        }
+
+        // find the index of the device to be deleted.
+        const deviceIndex = gateway.devices.findIndex((d) => d.uid === duid);
+
+        // if the device is not found then the operation cannot be performed
+        // hence returning false.
+        if (deviceIndex === -1) {
+            return false;
+        }
+
+        gateway.devices.splice(deviceIndex, 1);
 
         return true;
     }
