@@ -11,10 +11,15 @@ import {
     Post,
     Put,
 } from '@nestjs/common';
-import { GatewayNotFoundException } from 'src/common/exceptions/exceptions';
+import {
+    AppException,
+    DeviceNotFoundException,
+    GatewayNotFoundException,
+} from 'src/common/exceptions/exceptions';
 import {
     DeviceDto,
     DeviceToCreateDto,
+    DeviceToUpdateDto,
     GatewayDto,
     GatewayToCreateDto,
     GatewayToUpdateDto,
@@ -98,7 +103,7 @@ export class GatewayController {
      */
     @Delete(':uid')
     @HttpCode(204)
-    delete(@Param('uid') uid: string) {
+    delete(@Param('uid') uid: string): void {
         const gateway = this._gatewayService.get(uid);
 
         if (!gateway) {
@@ -158,5 +163,41 @@ export class GatewayController {
         }
 
         return device;
+    }
+
+    /**
+     * Updates an existing device.
+     * @param uid The uid of the gateway that owns the device.
+     * @param duid The uid of the device to be updated.
+     * @param deviceToUpdate Data to update the device.
+     */
+    @Put(':uid/devices/:duid')
+    @HttpCode(204)
+    putDevice(
+        @Param('uid') uid: string,
+        @Param('duid') duid: number,
+        @Body() deviceToUpdate: DeviceToUpdateDto,
+    ): void {
+        const gateway = this._gatewayService.get(uid);
+
+        if (!gateway) {
+            throw new GatewayNotFoundException();
+        }
+
+        const device = gateway.devices.find((d) => d.uid === duid);
+
+        if (!device) {
+            throw new DeviceNotFoundException();
+        }
+
+        const result = this._gatewayService.putDevice(
+            uid,
+            duid,
+            deviceToUpdate,
+        );
+
+        if (!result) {
+            throw new AppException();
+        }
     }
 }

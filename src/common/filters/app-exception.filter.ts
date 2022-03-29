@@ -11,6 +11,7 @@ import {
 import { BaseExceptionFilter } from '@nestjs/core';
 import {
     AppException,
+    DeviceNotFoundException,
     GatewayMaxNumberOfDevicesException,
     GatewayNotFoundException,
 } from '../exceptions/exceptions';
@@ -21,7 +22,10 @@ export class AppExceptionFilter extends BaseExceptionFilter {
 
     catch(exception: AppException, host: ArgumentsHost) {
         let _exception: HttpException;
-        if (exception instanceof GatewayNotFoundException) {
+        if (
+            exception instanceof GatewayNotFoundException ||
+            exception instanceof DeviceNotFoundException
+        ) {
             _exception = new NotFoundException(exception.message);
         } else if (exception instanceof GatewayMaxNumberOfDevicesException) {
             _exception = new BadRequestException(exception.message);

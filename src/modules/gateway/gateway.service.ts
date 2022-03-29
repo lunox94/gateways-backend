@@ -6,6 +6,7 @@ import { gateways } from 'src/mock/gateways.data';
 import { v4 as uuidv4 } from 'uuid';
 import {
     DeviceToCreateDto,
+    DeviceToUpdateDto,
     GatewayToCreateDto,
     GatewayToUpdateDto,
 } from './dto/dto';
@@ -47,7 +48,7 @@ export class GatewayService {
      * @param gatewayToCreate Data to create the new gateway.
      * @returns The newly created gateway.
      */
-    post(gatewayToCreate: GatewayToCreateDto) {
+    post(gatewayToCreate: GatewayToCreateDto): Gateway {
         const gateway: Gateway = {
             ...gatewayToCreate,
             uid: uuidv4(),
@@ -89,7 +90,7 @@ export class GatewayService {
      * @returns A boolean that indicates whether or not the operation completed
      * successfully.
      */
-    delete(uid: string) {
+    delete(uid: string): boolean {
         // find the index of the gateway that should be deleted.
         const index = this._gateways.findIndex((g) => g.uid === uid);
 
@@ -115,11 +116,11 @@ export class GatewayService {
         uid: string,
         deviceToCreate: DeviceToCreateDto,
     ): Device | undefined {
-        // find the gateway that should own this device
+        // find the gateway that should own this device.
         const gateway = this._gateways.find((g) => g.uid === uid);
 
         // if the gateway is not found then the operation cannot be performed
-        // hence returning false.
+        // hence returning undefined.
         if (!gateway) {
             return undefined;
         }
@@ -140,5 +141,39 @@ export class GatewayService {
         gateway.devices.push(device);
 
         return device;
+    }
+
+    /**
+     * Updates an existing device.
+     * @param uid The uid of the gateway that owns this device.
+     * @param duid The uid of the device to be updated.
+     * @param deviceToUpdate Data to update the device.
+     * @returns A boolean that indicates whether or not the operation completed
+     * successfully.
+     */
+    putDevice(
+        uid: string,
+        duid: number,
+        deviceToUpdate: DeviceToUpdateDto,
+    ): boolean {
+        // find the gateway that should own this device.
+        const gateway = this._gateways.find((g) => g.uid === uid);
+
+        // find the device to be updated.
+        const deviceIndex = gateway.devices.findIndex((d) => d.uid === duid);
+
+        // if the gateway is not found or the device is not found
+        // then the operation cannot be performed hence returning false.
+        if (!gateway || deviceIndex === -1) {
+            return undefined;
+        }
+
+        const newDevice = {
+            ...gateway.devices[deviceIndex],
+            ...deviceToUpdate,
+        };
+        gateway.devices[deviceIndex] = newDevice;
+
+        return true;
     }
 }
