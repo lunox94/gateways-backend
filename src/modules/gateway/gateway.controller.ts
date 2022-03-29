@@ -6,10 +6,12 @@ import {
     HttpCode,
     HttpException,
     HttpStatus,
+    NotFoundException,
     Param,
     Post,
     Put,
 } from '@nestjs/common';
+import { GatewayNotFoundException } from 'src/common/exceptions/exceptions';
 import {
     DeviceDto,
     DeviceToCreateDto,
@@ -45,7 +47,7 @@ export class GatewayController {
         const gateway = this._gatewayService.get(uid);
 
         if (!gateway) {
-            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+            throw new GatewayNotFoundException();
         }
 
         return new GatewayDto(gateway);
@@ -77,7 +79,7 @@ export class GatewayController {
         const gateway = this._gatewayService.get(uid);
 
         if (!gateway) {
-            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+            throw new GatewayNotFoundException();
         }
 
         const result = this._gatewayService.put(gateway.uid, gatewayToUpdate);
@@ -100,7 +102,7 @@ export class GatewayController {
         const gateway = this._gatewayService.get(uid);
 
         if (!gateway) {
-            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+            throw new GatewayNotFoundException();
         }
 
         const result = this._gatewayService.delete(uid);
@@ -123,7 +125,7 @@ export class GatewayController {
         const gateway = this._gatewayService.get(uid);
 
         if (!gateway) {
-            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+            throw new GatewayNotFoundException();
         }
 
         return gateway.devices.map((d) => new DeviceDto(d));
@@ -143,7 +145,7 @@ export class GatewayController {
         const gateway = this._gatewayService.get(uid);
 
         if (!gateway) {
-            throw new HttpException('Gateway not found', HttpStatus.NOT_FOUND);
+            throw new GatewayNotFoundException();
         }
 
         const device = this._gatewayService.postDevice(uid, deviceToCreate);

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { GatewayMaxNumberOfDevicesException } from 'src/common/exceptions/exceptions';
 import { Device } from 'src/domain/device/device.model';
 import { Gateway } from 'src/domain/gateway/gateway.model';
 import { gateways } from 'src/mock/gateways.data';
@@ -8,6 +9,8 @@ import {
     GatewayToCreateDto,
     GatewayToUpdateDto,
 } from './dto/dto';
+
+export const MAX_DEVICES = 10;
 
 /**
  * Cover all use cases for the Gateway resource including CRUD operations
@@ -112,10 +115,12 @@ export class GatewayService {
         uid: string,
         deviceToCreate: DeviceToCreateDto,
     ): Device | undefined {
-        // find the index of the gateway that should own this device
-        const index = this._gateways.findIndex((g) => g.uid === uid);
+        // find the gateway that should own this device
+        const gateway = this._gateways.find((g) => g.uid === uid);
 
-        if (index === -1) {
+        // if the gateway is not found then the operation cannot be performed
+        // hence returning false.
+        if (!gateway) {
             return undefined;
         }
 
@@ -128,7 +133,11 @@ export class GatewayService {
             createdAt: new Date(),
         };
 
-        this._gateways[index].devices.push(device);
+        if (gateway.devices.length >= MAX_DEVICES) {
+            throw new GatewayMaxNumberOfDevicesException();
+        }
+
+        gateway.devices.push(device);
 
         return device;
     }
