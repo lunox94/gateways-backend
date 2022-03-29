@@ -35,13 +35,13 @@ export class AppExceptionFilter extends BaseExceptionFilter {
 
         if (_exception.getStatus() === HttpStatus.INTERNAL_SERVER_ERROR) {
             this._logger.error(
-                `Status: ${_exception.getStatus()} Exception: ${
+                `Status: ${_exception.getStatus()} | Exception: ${
                     exception.name
-                } Stack: ${exception.stack}`,
+                } | Stack: ${exception.stack}`,
             );
         } else {
             this._logger.log(
-                `Status: ${_exception.getStatus()} Exception: ${
+                `Status: ${_exception.getStatus()} | Exception: ${
                     exception.name
                 }`,
             );

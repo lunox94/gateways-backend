@@ -153,7 +153,7 @@ export class GatewayController {
             throw new AppException();
         }
 
-        return device;
+        return new DeviceDto(device);
     }
 
     /**
