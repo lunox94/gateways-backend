@@ -26,6 +26,10 @@ async function bootstrap() {
     );
     const { httpAdapter } = app.get(HttpAdapterHost);
     app.useGlobalFilters(new AppExceptionFilter(httpAdapter));
+
+    // configure CORS policies
+    app.enableCors();
+
     await app.listen(3000);
 }
 bootstrap();
