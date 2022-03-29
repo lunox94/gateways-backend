@@ -1,5 +1,5 @@
 import { Gateway } from 'src/domain/gateway.model';
-import { DeviceDto } from './device.dto';
+import { DeviceDto } from '../device/device.dto';
 
 export class GatewayDto {
     readonly uid: string;
