@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GatewayMaxNumberOfDevicesException } from 'src/common/exceptions/exceptions';
 import { Device } from 'src/domain/device.model';
 import { Gateway } from 'src/domain/gateway.model';
-import { gateways } from 'src/mock/gateways.data';
-import { v4 as uuidv4 } from 'uuid';
+import { Repository } from 'src/infrastructure/repository';
 import {
     DeviceToCreateDto,
     DeviceToUpdateDto,
@@ -19,28 +18,24 @@ export const MAX_DEVICES = 10;
  */
 @Injectable()
 export class GatewayService {
-    private _gateways: Gateway[];
-
-    constructor() {
-        // Fill in-memory data with mock data.
-        this._gateways = gateways;
-    }
+    constructor(private _repository: Repository) {}
 
     /**
-     * Gets all the gateways.
+     * Gets all gateways.
      * @returns List of gateways.
      */
     getAll(): Gateway[] {
-        return this._gateways;
+        return this._repository.getAll();
+        // return this._gateways;
     }
 
     /**
      * Gets a gateway by its uid.
      * @param uid The gateway uid.
-     * @returns Returns the gateway if found otherwise returns undefined.
+     * @returns Returns the gateway if found otherwise returns null.
      */
     get(uid: string): Gateway {
-        return this._gateways.find((g) => g.uid == uid);
+        return this._repository.getOrNull(uid);
     }
 
     /**
@@ -49,15 +44,11 @@ export class GatewayService {
      * @returns The newly created gateway.
      */
     post(gatewayToCreate: GatewayToCreateDto): Gateway {
-        const gateway: Gateway = {
+        const gateway = {
             ...gatewayToCreate,
-            uid: uuidv4(),
-            devices: [],
-        };
+        } as Gateway;
 
-        this._gateways.push(gateway);
-
-        return gateway;
+        return this._repository.add(gateway);
     }
 
     /**
@@ -68,18 +59,21 @@ export class GatewayService {
      * successfully.
      */
     put(uid: string, gatewayToUpdate: GatewayToUpdateDto): boolean {
-        // find the index of the gateway that should be updated.
-        const index = this._gateways.findIndex((g) => g.uid === uid);
+        // find the  gateway that should be updated.
+        const gateway = this._repository.getOrNull(uid);
 
         // if the gateway is not found then the operation cannot be performed
         // hence returning false.
-        if (index === -1) {
+        if (gateway === null) {
             return false;
         }
 
-        const newGateway = { ...this._gateways[index], ...gatewayToUpdate };
+        const newGateway: Gateway = {
+            ...gateway,
+            ...gatewayToUpdate,
+        };
 
-        this._gateways[index] = newGateway;
+        this._repository.update(newGateway);
 
         return true;
     }
@@ -91,16 +85,16 @@ export class GatewayService {
      * successfully.
      */
     delete(uid: string): boolean {
-        // find the index of the gateway that should be deleted.
-        const index = this._gateways.findIndex((g) => g.uid === uid);
+        // find the  gateway that should be deleted.
+        const gateway = this._repository.getOrNull(uid);
 
         // if the gateway is not found then the operation cannot be performed
         // hence returning false.
-        if (index === -1) {
+        if (gateway === null) {
             return false;
         }
 
-        this._gateways.splice(index, 1);
+        this._repository.remove(gateway);
 
         return true;
     }
@@ -117,30 +111,23 @@ export class GatewayService {
         deviceToCreate: DeviceToCreateDto,
     ): Device | undefined {
         // find the gateway that should own this device.
-        const gateway = this._gateways.find((g) => g.uid === uid);
+        const gateway = this._repository.getOrNull(uid);
 
         // if the gateway is not found then the operation cannot be performed
         // hence returning undefined.
-        if (!gateway) {
+        if (gateway === null) {
             return undefined;
         }
-
-        const device: Device = {
-            ...deviceToCreate,
-            // using Date.now() to the uid due the business specs dictates
-            // the uid should be a number, as an in-memory solution is being used
-            // a timestamp should fit the specs.
-            uid: Date.now(),
-            createdAt: new Date(),
-        };
 
         if (gateway.devices.length >= MAX_DEVICES) {
             throw new GatewayMaxNumberOfDevicesException();
         }
 
-        gateway.devices.push(device);
+        const device = {
+            ...deviceToCreate,
+        } as Device;
 
-        return device;
+        return this._repository.addDevice(gateway, device);
     }
 
     /**
@@ -157,11 +144,11 @@ export class GatewayService {
         deviceToUpdate: DeviceToUpdateDto,
     ): boolean {
         // find the gateway that should own this device.
-        const gateway = this._gateways.find((g) => g.uid === uid);
+        const gateway = this._repository.getOrNull(uid);
 
         // if the gateway is not found then the operation cannot
         // be performed hence returning false.
-        if (!gateway) {
+        if (gateway === null) {
             return false;
         }
 
@@ -179,7 +166,7 @@ export class GatewayService {
             ...deviceToUpdate,
         };
 
-        gateway.devices[deviceIndex] = newDevice;
+        this._repository.updateDevice(gateway, newDevice);
 
         return true;
     }
@@ -192,11 +179,11 @@ export class GatewayService {
      * successfully.
      */
     deleteDevice(uid: string, duid: number): boolean {
-        const gateway = this._gateways.find((g) => g.uid === uid);
+        const gateway = this._repository.getOrNull(uid);
 
         // if the gateway is not found then the operation cannot be performed
         // hence returning false.
-        if (!gateway) {
+        if (gateway === null) {
             return false;
         }
 
@@ -209,7 +196,7 @@ export class GatewayService {
             return false;
         }
 
-        gateway.devices.splice(deviceIndex, 1);
+        this._repository.removeDevice(gateway, gateway.devices[deviceIndex]);
 
         return true;
     }
