@@ -6,14 +6,16 @@ import { Repository } from 'src/infrastructure/repository';
 import { InMemoryRepository } from 'src/infrastructure/in-memory-repository';
 import { InMemoryDb } from 'src/common/constants/constants';
 
+export const InMemoryRepositoryProvider = {
+    provide: Repository,
+    useClass: InMemoryRepository,
+};
+
 @Module({
     controllers: [GatewayController],
     providers: [
         GatewayService,
-        {
-            provide: Repository,
-            useClass: InMemoryRepository,
-        },
+        InMemoryRepositoryProvider,
         {
             provide: InMemoryDb,
             useValue: gateways,
