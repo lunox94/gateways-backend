@@ -120,7 +120,7 @@ export const gateways: Gateway[] = [
     },
     {
         uid: '0289120a-2f3e-47e1-b06d-8da052c8b2cb',
-        name: ' PCIe',
+        name: 'PCIe',
         ipv4: '112.112.4.4',
         devices: [
             {

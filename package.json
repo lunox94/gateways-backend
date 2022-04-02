@@ -1,8 +1,8 @@
 {
   "name": "gateways-backend",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "0.0.5",
+  "description": "Gateways backend",
+  "author": "Gerardo Martinez",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
